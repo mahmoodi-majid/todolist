@@ -1,84 +1,72 @@
-import React, { Component } from 'react'
+import React, {useState } from 'react'
 import Header from './Header'
 import Todo from './Todo'
 
-export default class TodoList extends Component {
+export default function TodoList() {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            todos: [],
-            todoTitle: '',
-            status: 'all'
-        }
-
-        this.addTodo = this.addTodo.bind(this)
-        this.removeTodo = this.removeTodo.bind(this)
-        this.editTodo   = this.editTodo.bind(this)
-        this.todoTitleHandler = this.todoTitleHandler.bind(this,)
-        this.statusHandler = this.statusHandler.bind(this) 
+        const [todos ,setTodos] = useState([]);
+        const [todoTitle , setTodoTitle] = useState("")
+        const [status , setStatus] = useState('all')
+       
         
-    }
-    addTodo(event){
+
+       
+        
+   
+    const addTodo = (event) => {
+       
         event.preventDefault()
 
         let newTodo = {
-            id: this.state.todos.length + 1,
-            todoTitle : this.state.todoTitle,
+            id: todos.length + 1,
+            title : todoTitle,
             completed : false
-
         }
-        this.setState(prevState => {
-            return {
-                todos : [...prevState.todos , newTodo] ,
-                todoTitle : ''
-            }
+        
+        setTodos(preveState => {
+            return [...preveState, newTodo]
         })
+
+        setTodoTitle('')
+       
        
     }
-    removeTodo(todoId){
-      let newTodo = this.state.todos.filter(todoItem => {
+    const removeTodo = (todoId) => {
+
+      let newTodo = todos.filter(todoItem => {
             return todoItem.id !== todoId
         })
-      this.setState({
-        todos : newTodo
-      })
+
+      setTodos(newTodo)
+      
     }
   
-    editTodo(todoID){
-     let newTOdo = [...this.state.todos]
+    const editTodo = (todoID) => {
+     let newTOdo = [...todos]
         newTOdo.forEach(todo => {
             if(todoID === todo.id){
                 todo.completed = !todo.completed
             }
         })  
-        this.setState({
-            todos : newTOdo
-        })
+        setTodos(newTOdo)
     }
-    todoTitleHandler(event){
-        this.setState({
-            todoTitle : event.target.value
-        })
+   const todoTitleHandler = (event) => {
+        setTodoTitle(event.target.value)
     }
-    statusHandler(event){
-       this.setState({
-         status : event.target.value
-       })
+    const statusHandler = (event) => {
+       setStatus(event.target.value)
     }
  
-
-    render() {
         return (
             <>
                 <Header />
-                <form onSubmit={this.addTodo}>
-                    <input type="text" className="todo-input" value={this.state.todoTitle} onChange={this.todoTitleHandler}  maxLength="40"/>
+                <form onSubmit={addTodo}>
+                    <input type="text" className="todo-input" value={todoTitle} onChange={todoTitleHandler}  maxLength="40"/>
                     <button className="todo-button" type="submit">
                         <i className="fas fa-plus-square"></i>
                     </button>
                     <div className="select">
-                        <select onChange={this.statusHandler} name="todos" className="filter-todo">
+                        <select onChange={statusHandler} name="todos" className="filter-todo">
                             <option value="all">All</option>
                             <option value="completed">Completed</option>
                             <option value="uncompleted">Uncompleted</option>
@@ -89,18 +77,18 @@ export default class TodoList extends Component {
                 <div className="todo-container">
                     <ul className="todo-list">
                     {
-                        this.state.status === 'completed' && this.state.todos.filter(todo => todo.completed).map(todo => (
-                            <Todo key={todo.id} {...todo} onRemoveTodo={this.removeTodo} onEditTodo ={this.editTodo}/>
+                        status === 'completed' && todos.filter(todo => todo.completed).map(todo => (
+                            <Todo key={todo.id} {...todo} onRemoveTodo={removeTodo} onEditTodo ={editTodo}/>
                         ))
                     }
                     {
-                        this.state.status === 'uncompleted' && this.state.todos.filter(todo => !todo.completed).map(todo => (
-                            <Todo key={todo.id} {...todo} onRemoveTodo={this.removeTodo} onEditTodo ={this.editTodo}/>
+                        status === 'uncompleted' && todos.filter(todo => !todo.completed).map(todo => (
+                            <Todo key={todo.id} {...todo} onRemoveTodo={removeTodo} onEditTodo ={editTodo}/>
                         ))
                     }
                     {
-                        this.state.status === "all" && this.state.todos.map(todoItem => (
-                            <Todo key={todoItem.id} {...todoItem} onRemoveTodo={this.removeTodo} onEditTodo ={this.editTodo}/>
+                        status === "all" && todos.map(todoItem => (
+                            <Todo key={todoItem.id} {...todoItem} onRemoveTodo={removeTodo} onEditTodo ={editTodo}/>
                         ))
                     }
                           
@@ -110,5 +98,5 @@ export default class TodoList extends Component {
                 </div>
             </>
         )
-    }
+    
 }
